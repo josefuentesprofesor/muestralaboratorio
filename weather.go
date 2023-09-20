@@ -141,6 +141,7 @@ recordsloop:
 			if i == 0 {
 				if strings.Compare(strings.ToLower(strings.Trim(ciudad, " \r\n")), strings.ToLower(strings.Trim(field, " \r\n"))) == 0 {
 					fmt.Printf("%s\t", field)
+					result = field + "\n"
 					found = true
 				}
 			} else {
@@ -148,22 +149,22 @@ recordsloop:
 					fmt.Printf("%s\t", field)
 					switch i {
 					case 1:
-						result = result + "Fecha: " + field
+						result = result + "Fecha: " + field + "\n"
 
 					case 2:
-						result = result + "Hora: " + field
+						result = result + "Hora: " + field + "\n"
 
 					case 3:
-						result = result + "Cielo: " + field
+						result = result + "Cielo: " + field + "\n"
 
 					case 4:
-						result = result + "Velocidad del viento: " + field
+						result = result + "Velocidad del viento: " + field + "\n"
 
 					case 8:
-						result = result + "Direccion del viento" + field
+						result = result + "Direccion del viento: " + field + "\n"
 
 					case 9:
-						result = result + "Presion atmosferica: " + field
+						result = result + "Presion atmosferica: " + field + "\n"
 
 					}
 				}
