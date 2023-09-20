@@ -85,7 +85,6 @@ func main() {
 			}
 
 		case "bitcoin":
-			//if loggedIn {
 			if value, exists := loggedUsers[update.Message.From.ID]; exists && value {
 				msg.Text = GetBitcoinPrice()
 			} else {
@@ -96,38 +95,36 @@ func main() {
 			}
 
 		case "subway":
-			/*if value, exists := loggedUsers[update.Message.From.ID]; exists && value {*/
-			msg.Text = SubwayAlerts(config.GcbaClientId, config.GcbaClientSecret)
-			if _, err := bot.Send(msg); err != nil {
-				log.Panic(err)
+			if value, exists := loggedUsers[update.Message.From.ID]; exists && value {
+				msg.Text = SubwayAlerts(config.GcbaClientId, config.GcbaClientSecret)
+				if _, err := bot.Send(msg); err != nil {
+					log.Panic(err)
+				}
 			}
-			/*}*/
 
 		case "bus":
-			/*if value, exists := loggedUsers[update.Message.From.ID]; exists && value {*/
-			msg.Text = BusAlerts(config.GcbaClientId, config.GcbaClientSecret)
-			if _, err := bot.Send(msg); err != nil {
-				log.Panic(err)
+			if value, exists := loggedUsers[update.Message.From.ID]; exists && value {
+				msg.Text = BusAlerts(config.GcbaClientId, config.GcbaClientSecret)
+				if _, err := bot.Send(msg); err != nil {
+					log.Panic(err)
+				}
 			}
-			/*}*/
 
 		case "bikes":
-			//if loggedIn {
-			/*if value, exists := loggedUsers[update.Message.From.ID]; exists && value {*/
-			msg.Text = StationInfo(config.GcbaClientId, config.GcbaClientSecret, 21)
-			if _, err := bot.Send(msg); err != nil {
-				log.Panic(err)
+			if value, exists := loggedUsers[update.Message.From.ID]; exists && value {
+				msg.Text = StationInfo(config.GcbaClientId, config.GcbaClientSecret, 21)
+				if _, err := bot.Send(msg); err != nil {
+					log.Panic(err)
+				}
 			}
-			/*}*/
 
 		case "weather":
-			//if loggedIn {
-			/*if value, exists := loggedUsers[update.Message.From.ID]; exists && value {*/
-			msg.Text = WeatherReport("Buenos Aires")
-			if _, err := bot.Send(msg); err != nil {
-				log.Panic(err)
+			if value, exists := loggedUsers[update.Message.From.ID]; exists && value {
+				msg.Text = WeatherReport("Buenos Aires")
+				if _, err := bot.Send(msg); err != nil {
+					log.Panic(err)
+				}
 			}
-			/*}*/
 
 		default:
 			msg.Text = "Comando no reconocido"
