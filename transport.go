@@ -9,6 +9,9 @@ import (
 	"os"
 	"strconv"
 	"time"
+
+	"github.com/MobilityData/gtfs-realtime-bindings/golang/gtfs"
+	"google.golang.org/protobuf/proto"
 )
 
 func Transport(clientId string, clientSecret string) string {
@@ -135,31 +138,73 @@ func SubwayAlerts(clientId string, clientSecret string) string {
 }
 
 func BusAlerts(clientId string, clientSecret string) string {
-	var busData BusRealtimeData
+	//var busData BusRealtimeData
 
 	var result string
 
-	serviceUrl := "https://apitransporte.buenosaires.gob.ar/colectivos/serviceAlerts/?json=1&client_id=" + clientId + "&client_secret=" + clientSecret
+	serviceUrl := "https://apitransporte.buenosaires.gob.ar/colectivos/serviceAlerts/?client_id=" + clientId + "&client_secret=" + clientSecret
 
-	fmt.Println(serviceUrl)
-	res, err := http.Get(serviceUrl)
+	/*	fmt.Println(serviceUrl)
+		resp, err := http.Get(serviceUrl)
 
-	// Deserializar los datos JSON en la estructura Person
-	err = json.NewDecoder(res.Body).Decode(&busData)
-	if err != nil {
-		fmt.Println("Error al decodificar los datos JSON:", err)
-	}
-
-	//	fmt.Println(busData)
-
-	t := time.Unix(busData.Header.Timestamp, 0)
-	result = "Fecha: " + t.Format("2006-01-02 15:04:05") + "\n"
-
-	for _, entity := range busData.Entity {
-		for _, tr := range entity.Alert.DescriptionText.Translation {
-			result = result + "Alerta: " + tr.Text + "\n"
+		body, err := ioutil.ReadAll(resp.Body)
+		if err != nil {
+			log.Fatal(err)
 		}
+	*/
+	client := &http.Client{}
+	req, err := http.NewRequest("GET", serviceUrl, nil)
+	//req.SetBasicAuth(username, password)
+	resp, err := client.Do(req)
+	defer resp.Body.Close()
+	if err != nil {
+		log.Fatal(err)
 	}
 
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	feed := gtfs.FeedMessage{}
+	err = proto.Unmarshal(body, &feed)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	for _, entity := range feed.Entity {
+		tripUpdate := entity.GetTripUpdate()
+		trip := tripUpdate.GetTrip()
+		tripId := trip.GetTripId()
+		fmt.Printf("Trip ID: %s\n", tripId)
+	}
+
+	/*	for _, entity := range feed.Entity {
+			tripUpdate := entity.GetTripUpdate()
+			trip := tripUpdate.GetTrip()
+			tripId := trip.GetTripId()
+			fmt.Printf("Trip ID: %s\n", tripId)
+			result = result + tripId + "\n"
+		}
+	*/
+
+	/*
+		// Deserializar los datos JSON en la estructura Person
+		err = json.NewDecoder(res.Body).Decode(&busData)
+		if err != nil {
+			fmt.Println("Error al decodificar los datos JSON:", err)
+		}
+
+		//	fmt.Println(busData)
+
+		t := time.Unix(busData.Header.Timestamp, 0)
+		result = "Fecha: " + t.Format("2006-01-02 15:04:05") + "\n"
+
+		for _, entity := range busData.Entity {
+			for _, tr := range entity.Alert.DescriptionText.Translation {
+				result = result + "Alerta: " + tr.Text + "\n"
+			}
+		}
+	*/
 	return result
 }
