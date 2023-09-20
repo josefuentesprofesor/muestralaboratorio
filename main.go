@@ -20,11 +20,11 @@ func main() {
 	fmt.Println("Inicializando...")
 	config := InitSecurity(adminKey)
 
-	fmt.Println("Leyendo claves...")
-	fmt.Println("TelegramKey: ", config.TelegramKey)
-	fmt.Println("GcbaClientId: ", config.GcbaClientId)
-	fmt.Println("GcbaClientSecret: ", config.GcbaClientSecret)
-	fmt.Println("OtpSecret: ", config.OtpSecret)
+	//fmt.Println("Leyendo claves...")
+	//fmt.Println("TelegramKey: ", config.TelegramKey)
+	//fmt.Println("GcbaClientId: ", config.GcbaClientId)
+	//fmt.Println("GcbaClientSecret: ", config.GcbaClientSecret)
+	//fmt.Println("OtpSecret: ", config.OtpSecret)
 
 	bot, err := tgbotapi.NewBotAPI(config.TelegramKey)
 
@@ -47,6 +47,21 @@ func main() {
 		}
 
 		if !update.Message.IsCommand() { // ignorar mensajes que no sean comandos
+			//inputOtp := update.Message.Command()
+			inputOtp := update.Message.Text
+			msg := tgbotapi.NewMessage(update.Message.Chat.ID, "")
+			if ValidateOtp(inputOtp, config.OtpSecret) {
+				loggedUsers[update.Message.From.ID] = true
+				msg.Text = "Bienvenido " + update.Message.From.FirstName + "(ID " + strconv.FormatInt(update.Message.From.ID, 10) + ")"
+				fmt.Println("OTP valido")
+			} else {
+				loggedUsers[update.Message.From.ID] = false
+				msg.Text = "OTP no valido"
+				fmt.Println("OTP no valido")
+			}
+			if _, err := bot.Send(msg); err != nil {
+				log.Panic(err)
+			}
 			continue
 		}
 
@@ -55,6 +70,12 @@ func main() {
 
 		// Extraer el comando del mensaje
 		switch update.Message.Command() {
+
+		case "start":
+			msg.Text = "Select a command:\n/bitcoin\n/subway\n/bus\n/bikes\n/weather"
+			if _, err := bot.Send(msg); err != nil {
+				log.Panic(err)
+			}
 
 		case "screenshot":
 			msg.Text = ""
@@ -109,16 +130,7 @@ func main() {
 			/*}*/
 
 		default:
-			inputOtp := update.Message.Command()
-			if ValidateOtp(inputOtp, config.OtpSecret) {
-				loggedUsers[update.Message.From.ID] = true
-				msg.Text = "Bienvenido " + update.Message.From.FirstName + "(ID " + strconv.FormatInt(update.Message.From.ID, 10) + ")"
-				fmt.Println("OTP valido")
-			} else {
-				loggedUsers[update.Message.From.ID] = false
-				msg.Text = "OTP no valido"
-				fmt.Println("OTP no valido")
-			}
+			msg.Text = "Comando no reconocido"
 			if _, err := bot.Send(msg); err != nil {
 				log.Panic(err)
 			}
