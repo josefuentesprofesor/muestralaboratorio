@@ -72,7 +72,7 @@ func main() {
 		switch update.Message.Command() {
 
 		case "start":
-			msg.Text = "Select a command:\n/bitcoin\n/subway\n/bus\n/bikes\n/weather"
+			msg.Text = "Select a command:\n/bitcoin\n/bikes\n/weather"
 			if _, err := bot.Send(msg); err != nil {
 				log.Panic(err)
 			}
